@@ -1,5 +1,6 @@
 node_modules/
 package-lock.json
 /pkg
-/pkg.tgz
+/pkg/pkg.tgz
 DEBUG-*
+/.idea/

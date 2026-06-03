@@ -1,34 +1,143 @@
-const { combineRgb } = require('@companion-module/base')
-const CHOICES = require('./choices')
+import { combineRgb } from '@companion-module/base'
+import CHOICES from './choices.js'
 
-const INACTIVE_TEXT = combineRgb(182, 182, 182)
-const INACTIVE_BACKGROUND = combineRgb(102, 0, 102)
-const ACTIVE_TEXT = combineRgb(204, 204, 204)
-const ACTIVE_BACKGROUND = combineRgb(153, 0, 153)
-const GREEN = combineRgb(0, 204, 0)
-const RED = combineRgb(182, 0, 0)
-const HIGHLIGHT = combineRgb(204, 0, 204)
+export default function (self) {
+	const RED = combineRgb(182, 0, 0)
 
-module.exports = function (self) {
-	self.setPresetDefinitions({
-		go: {
+	const PRESETS = {
+		stopwatch_start: {
 			type: 'button',
-			category: 'ACTIONS',
-			name: `GO`,
+			category: 'STOPWATCH',
+			name: `STOPWATCH START`,
 			style: {
-				text: `GO`,
-				size: 'auto',
-				color: INACTIVE_TEXT,
-				bgcolor: INACTIVE_BACKGROUND,
+				text: `SW\\nSTART`,
+				size: '14',
+				color: '$' + '(multiplay:color_inactive_text)',
+				bgcolor: '$' + '(multiplay:color_inactive_bg)',
 			},
 			steps: [
 				{
 					down: [
 						{
-							actionId: 'go',
+							actionId: 'stopwatch',
 							options: {
-								stopAll: true,
+								action: 'start',
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'theme_base',
+					options: {
+						state: 'inactive',
+					},
+				},
+				{
+					feedbackId: 'checkState',
+					options: {
+						action: 8,
+					},
+				},
+			],
+		},
+		stopwatch_stop: {
+			type: 'button',
+			category: 'STOPWATCH',
+			name: `STOPWATCH STOP`,
+			style: {
+				text: `SW\\nSTOP`,
+				size: '14',
+				color: '$' + '(multiplay:color_inactive_text)',
+				bgcolor: '$' + '(multiplay:color_inactive_bg)',
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'stopwatch',
+							options: {
+								action: 'stop',
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'theme_base',
+					options: {
+						state: 'inactive',
+					},
+				},
+				{
+					feedbackId: 'checkState',
+					options: {
+						action: 9,
+					},
+				},
+			],
+		},
+		stopwatch_reset: {
+			type: 'button',
+			category: 'STOPWATCH',
+			name: `STOPWATCH RESET`,
+			style: {
+				text: `SW\\nRESET`,
+				size: '14',
+				color: '$' + '(multiplay:color_inactive_text)',
+				bgcolor: '$' + '(multiplay:color_inactive_bg)',
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'stopwatch',
+							options: {
+								action: 'reset',
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'theme_base',
+					options: {
+						state: 'inactive',
+					},
+				},
+				{
+					feedbackId: 'checkState',
+					options: {
+						action: 10,
+					},
+				},
+			],
+		},
+		speed_normal: {
+			type: 'button',
+			category: 'ADJUSTMENTS',
+			name: `SPEED NORMAL`,
+			style: {
+				text: `SPEED\\nNORM`,
+				size: '14',
+				color: '$' + '(multiplay:color_inactive_text)',
+				bgcolor: '$' + '(multiplay:color_inactive_bg)',
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'speed',
+							options: {
 								target: 'current',
+								behaviour: 'absolute',
+								absolute: 100,
 							},
 						},
 					],
@@ -37,37 +146,40 @@ module.exports = function (self) {
 			],
 			feedbacks: [
 				{
-					feedbackId: 'checkState',
+					feedbackId: 'theme_base',
 					options: {
-						action: 0,
+						state: 'inactive',
 					},
-					style: {
-						text: `GO`,
-						size: 'auto',
-						color: GREEN,
-						bgcolor: HIGHLIGHT,
-					},
+				},
+				{
+					feedbackId: 'speed',
+					options: {},
+				},
+				{
+					feedbackId: 'active',
+					options: {},
 				},
 			],
 		},
-
-		stop_all: {
+		pan_center: {
 			type: 'button',
-			category: 'ACTIONS',
-			name: `STOP ALL`,
+			category: 'ADJUSTMENTS',
+			name: `PAN CENTER`,
 			style: {
-				text: `STOP ALL`,
-				size: '18',
-				color: INACTIVE_TEXT,
-				bgcolor: INACTIVE_BACKGROUND,
+				text: `PAN\\nCENTER`,
+				size: '14',
+				color: '$' + '(multiplay:color_inactive_text)',
+				bgcolor: '$' + '(multiplay:color_inactive_bg)',
 			},
 			steps: [
 				{
 					down: [
 						{
-							actionId: 'stop',
+							actionId: 'pan',
 							options: {
-								target: 'active',
+								target: 'current',
+								direction: 'absolute',
+								absolute: 0,
 							},
 						},
 					],
@@ -76,27 +188,30 @@ module.exports = function (self) {
 			],
 			feedbacks: [
 				{
-					feedbackId: 'checkState',
+					feedbackId: 'theme_base',
 					options: {
-						action: 1,
+						state: 'inactive',
 					},
-					style: {
-						color: ACTIVE_TEXT,
-						bgcolor: ACTIVE_BACKGROUND,
-					},
+				},
+				{
+					feedbackId: 'pan',
+					options: {},
+				},
+				{
+					feedbackId: 'active',
+					options: {},
 				},
 			],
 		},
-
-		pause_all: {
+		pause_current: {
 			type: 'button',
 			category: 'ACTIONS',
-			name: `PAUSE ALL`,
+			name: `PAUSE CURRENT`,
 			style: {
-				text: `PAUSE ALL`,
-				size: '18',
-				color: INACTIVE_TEXT,
-				bgcolor: INACTIVE_BACKGROUND,
+				text: `PAUSE\\nCURR`,
+				size: '14',
+				color: '$' + '(multiplay:color_inactive_text)',
+				bgcolor: '$' + '(multiplay:color_inactive_bg)',
 			},
 			steps: [
 				{
@@ -105,7 +220,7 @@ module.exports = function (self) {
 							actionId: 'pause',
 							options: {
 								toggle: true,
-								target: 'active',
+								target: 'current',
 							},
 						},
 					],
@@ -114,72 +229,34 @@ module.exports = function (self) {
 			],
 			feedbacks: [
 				{
-					feedbackId: 'checkState',
+					feedbackId: 'theme_base',
 					options: {
-						action: 1,
+						state: 'inactive',
 					},
-					style: {
-						color: ACTIVE_TEXT,
-						bgcolor: ACTIVE_BACKGROUND,
-					},
+				},
+				{
+					feedbackId: 'active',
+					options: {},
 				},
 			],
 		},
-
-		fade_all: {
+		resume_current: {
 			type: 'button',
 			category: 'ACTIONS',
-			name: `FADE ALL`,
+			name: `RESUME CURRENT`,
 			style: {
-				text: `FADE ALL`,
-				size: '18',
-				color: INACTIVE_TEXT,
-				bgcolor: INACTIVE_BACKGROUND,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'fade',
-							options: {
-								target: 'active',
-							},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				{
-					feedbackId: 'checkState',
-					options: {
-						action: 2,
-					},
-					style: {
-						color: ACTIVE_TEXT,
-						bgcolor: ACTIVE_BACKGROUND,
-					},
-				},
-			],
-		},
-
-		restart_all: {
-			type: 'button',
-			category: 'ACTIONS',
-			name: `RESTART ALL`,
-			style: {
-				text: `RESTART ALL`,
+				text: `RESUME\\nCURR`,
 				size: '14',
-				color: INACTIVE_TEXT,
-				bgcolor: INACTIVE_BACKGROUND,
+				color: '$' + '(multiplay:color_inactive_text)',
+				bgcolor: '$' + '(multiplay:color_inactive_bg)',
 			},
 			steps: [
 				{
 					down: [
 						{
-							actionId: 'restart',
+							actionId: 'resume',
 							options: {
-								target: 'active',
+								target: 'current',
 							},
 						},
 					],
@@ -188,175 +265,22 @@ module.exports = function (self) {
 			],
 			feedbacks: [
 				{
-					feedbackId: 'checkState',
+					feedbackId: 'theme_base',
 					options: {
-						action: 2,
-					},
-					style: {
-						color: ACTIVE_TEXT,
-						bgcolor: ACTIVE_BACKGROUND,
+						state: 'inactive',
 					},
 				},
 			],
 		},
-
-		next: {
-			type: 'button',
-			category: 'PLAYHEAD MOVE',
-			name: `SELECT NEXT CUE`,
-			style: {
-				text: `NEXT`,
-				size: '18',
-				color: INACTIVE_TEXT,
-				bgcolor: INACTIVE_BACKGROUND,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'select',
-							options: {
-								target: 'next',
-							},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				{
-					feedbackId: 'checkState',
-					options: {
-						action: 4,
-					},
-					style: {
-						color: ACTIVE_TEXT,
-						bgcolor: ACTIVE_BACKGROUND,
-					},
-				},
-			],
-		},
-
-		prev: {
-			type: 'button',
-			category: 'PLAYHEAD MOVE',
-			name: `SELECT PREVIOUS CUE`,
-			style: {
-				text: `PREV`,
-				size: '18',
-				color: INACTIVE_TEXT,
-				bgcolor: INACTIVE_BACKGROUND,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'select',
-							options: {
-								target: 'prev',
-							},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				{
-					feedbackId: 'checkState',
-					options: {
-						action: 3,
-					},
-					style: {
-						color: ACTIVE_TEXT,
-						bgcolor: ACTIVE_BACKGROUND,
-					},
-				},
-			],
-		},
-
-		first: {
-			type: 'button',
-			category: 'PLAYHEAD MOVE',
-			name: `SELECT FIRST CUE`,
-			style: {
-				text: `FIRST`,
-				size: '18',
-				color: INACTIVE_TEXT,
-				bgcolor: INACTIVE_BACKGROUND,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'select',
-							options: {
-								target: 'first',
-							},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				{
-					feedbackId: 'checkState',
-					options: {
-						action: 3,
-					},
-					style: {
-						color: ACTIVE_TEXT,
-						bgcolor: ACTIVE_BACKGROUND,
-					},
-				},
-			],
-		},
-
-		last: {
-			type: 'button',
-			category: 'PLAYHEAD MOVE',
-			name: `SELECT LAST CUE`,
-			style: {
-				text: `LAST`,
-				size: '18',
-				color: INACTIVE_TEXT,
-				bgcolor: INACTIVE_BACKGROUND,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'select',
-							options: {
-								target: 'last',
-							},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				{
-					feedbackId: 'checkState',
-					options: {
-						action: 4,
-					},
-					style: {
-						color: ACTIVE_TEXT,
-						bgcolor: ACTIVE_BACKGROUND,
-					},
-				},
-			],
-		},
-
-		t_remaining: {
+		volume_info: {
 			type: 'button',
 			category: 'INFO',
-			name: `TIME REMAINING`,
+			name: `VOLUME INFO`,
 			style: {
-				text: `$(multiplay:t_remain)`,
-				size: 'Auto',
-				color: INACTIVE_BACKGROUND,
-				bgcolor: INACTIVE_TEXT,
+				text: `VOL\\n$(multiplay:v_current)`,
+				size: 'auto',
+				color: '$' + '(multiplay:color_info_text)',
+				bgcolor: '$' + '(multiplay:color_info_bg)',
 			},
 			steps: [
 				{
@@ -366,26 +290,22 @@ module.exports = function (self) {
 			],
 			feedbacks: [
 				{
-					feedbackId: 'warningTime',
+					feedbackId: 'theme_base',
 					options: {
-						seconds: 5,
-					},
-					style: {
-						color: RED,
+						state: 'info',
 					},
 				},
 			],
 		},
-
-		t_elapsed: {
+		pan_info: {
 			type: 'button',
 			category: 'INFO',
-			name: `TIME ELAPSED`,
+			name: `PAN INFO`,
 			style: {
-				text: `$(multiplay:t_elapsed)`,
-				size: 'Auto',
-				color: INACTIVE_BACKGROUND,
-				bgcolor: INACTIVE_TEXT,
+				text: `PAN\\n$(multiplay:p_current)`,
+				size: 'auto',
+				color: '$' + '(multiplay:color_info_text)',
+				bgcolor: '$' + '(multiplay:color_info_bg)',
 			},
 			steps: [
 				{
@@ -393,18 +313,24 @@ module.exports = function (self) {
 					up: [],
 				},
 			],
-			feedbacks: [],
+			feedbacks: [
+				{
+					feedbackId: 'theme_base',
+					options: {
+						state: 'info',
+					},
+				},
+			],
 		},
-
-		current_cue: {
+		speed_info: {
 			type: 'button',
 			category: 'INFO',
-			name: `CURRENT CUE`,
+			name: `SPEED INFO`,
 			style: {
-				text: `$(multiplay:q_description)`,
-				size: 'Auto',
-				color: INACTIVE_BACKGROUND,
-				bgcolor: INACTIVE_TEXT,
+				text: `SPD\\n$(multiplay:s_current)`,
+				size: 'auto',
+				color: '$' + '(multiplay:color_info_text)',
+				bgcolor: '$' + '(multiplay:color_info_bg)',
 			},
 			steps: [
 				{
@@ -412,18 +338,24 @@ module.exports = function (self) {
 					up: [],
 				},
 			],
-			feedbacks: [],
+			feedbacks: [
+				{
+					feedbackId: 'theme_base',
+					options: {
+						state: 'info',
+					},
+				},
+			],
 		},
-
-		volume_up: {
+		volume_scale_up: {
 			type: 'button',
-			category: 'CURRENT CUE ADJUSTMENTS',
-			name: `VOL UP`,
+			category: 'ADJUSTMENTS',
+			name: `VOL SCALE 1.0`,
 			style: {
-				text: `+`,
-				size: '24',
-				color: INACTIVE_TEXT,
-				bgcolor: INACTIVE_BACKGROUND,
+				text: `VOL\\nFULL`,
+				size: '14',
+				color: '$' + '(multiplay:color_inactive_text)',
+				bgcolor: '$' + '(multiplay:color_inactive_bg)',
 			},
 			steps: [
 				{
@@ -432,8 +364,8 @@ module.exports = function (self) {
 							actionId: 'volume',
 							options: {
 								target: 'current',
-								behaviour: 'relative',
-								relative: '1',
+								behaviour: 'scale',
+								scale: 1,
 							},
 						},
 					],
@@ -442,62 +374,30 @@ module.exports = function (self) {
 			],
 			feedbacks: [
 				{
-					feedbackId: 'active',
-					options: {},
-					style: {
-						color: ACTIVE_TEXT,
-						bgcolor: ACTIVE_BACKGROUND,
+					feedbackId: 'theme_base',
+					options: {
+						state: 'inactive',
 					},
 				},
-			],
-		},
-
-		volume_down: {
-			type: 'button',
-			category: 'CURRENT CUE ADJUSTMENTS',
-			name: `VOL DOWN`,
-			style: {
-				text: `-`,
-				size: 'Auto',
-				color: INACTIVE_TEXT,
-				bgcolor: INACTIVE_BACKGROUND,
-			},
-			steps: [
 				{
-					down: [
-						{
-							actionId: 'volume',
-							options: {
-								target: 'current',
-								behaviour: 'relative',
-								relative: '-1',
-							},
-						},
-					],
-					up: [],
+					feedbackId: 'volume',
+					options: {},
 				},
-			],
-			feedbacks: [
 				{
 					feedbackId: 'active',
 					options: {},
-					style: {
-						color: ACTIVE_TEXT,
-						bgcolor: ACTIVE_BACKGROUND,
-					},
 				},
 			],
 		},
-
 		volume_revert: {
 			type: 'button',
-			category: 'CURRENT CUE ADJUSTMENTS',
+			category: 'ADJUSTMENTS',
 			name: `VOL REVERT`,
 			style: {
-				text: `VOL`,
-				size: '18',
-				color: INACTIVE_TEXT,
-				bgcolor: INACTIVE_BACKGROUND,
+				text: `VOL\\n$(multiplay:v_current)`,
+				size: '14',
+				color: '$' + '(multiplay:color_inactive_text)',
+				bgcolor: '$' + '(multiplay:color_inactive_bg)',
 			},
 			steps: [
 				{
@@ -515,135 +415,30 @@ module.exports = function (self) {
 			],
 			feedbacks: [
 				{
-					feedbackId: 'active',
-					options: {},
-					style: {
-						color: ACTIVE_TEXT,
-						bgcolor: ACTIVE_BACKGROUND,
+					feedbackId: 'theme_base',
+					options: {
+						state: 'inactive',
 					},
 				},
-			],
-		},
-
-		speed_up: {
-			type: 'button',
-			category: 'CURRENT CUE ADJUSTMENTS',
-			name: `SPEED UP`,
-			style: {
-				text: `+`,
-				size: '24',
-				color: INACTIVE_TEXT,
-				bgcolor: INACTIVE_BACKGROUND,
-			},
-			steps: [
 				{
-					down: [
-						{
-							actionId: 'speed',
-							options: {
-								target: 'current',
-								behaviour: 'relative',
-								relative: '1',
-							},
-						},
-					],
-					up: [],
+					feedbackId: 'volume',
+					options: {},
 				},
-			],
-			feedbacks: [
 				{
 					feedbackId: 'active',
 					options: {},
-					style: {
-						color: ACTIVE_TEXT,
-						bgcolor: ACTIVE_BACKGROUND,
-					},
 				},
 			],
 		},
-
-		speed_down: {
+		pan_scale_left: {
 			type: 'button',
-			category: 'CURRENT CUE ADJUSTMENTS',
-			name: `SPEED DOWN`,
+			category: 'ADJUSTMENTS',
+			name: `PAN SCALE LEFT`,
 			style: {
-				text: `-`,
-				size: 'Auto',
-				color: INACTIVE_TEXT,
-				bgcolor: INACTIVE_BACKGROUND,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'speed',
-							options: {
-								target: 'current',
-								behaviour: 'relative',
-								relative: '-1',
-							},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				{
-					feedbackId: 'active',
-					options: {},
-					style: {
-						color: ACTIVE_TEXT,
-						bgcolor: ACTIVE_BACKGROUND,
-					},
-				},
-			],
-		},
-
-		speed_revert: {
-			type: 'button',
-			category: 'CURRENT CUE ADJUSTMENTS',
-			name: `SPEED REVERT`,
-			style: {
-				text: `SPEED`,
-				size: '18',
-				color: INACTIVE_TEXT,
-				bgcolor: INACTIVE_BACKGROUND,
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'speed',
-							options: {
-								target: 'current',
-								behaviour: 'revert',
-							},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				{
-					feedbackId: 'active',
-					options: {},
-					style: {
-						color: ACTIVE_TEXT,
-						bgcolor: ACTIVE_BACKGROUND,
-					},
-				},
-			],
-		},
-
-		pan_left: {
-			type: 'button',
-			category: 'CURRENT CUE ADJUSTMENTS',
-			name: `PAN LEFT`,
-			style: {
-				text: `<`,
-				size: 'Auto',
-				color: INACTIVE_TEXT,
-				bgcolor: INACTIVE_BACKGROUND,
+				text: `PAN\\nLEFT`,
+				size: '14',
+				color: '$' + '(multiplay:color_inactive_text)',
+				bgcolor: '$' + '(multiplay:color_inactive_bg)',
 			},
 			steps: [
 				{
@@ -652,8 +447,8 @@ module.exports = function (self) {
 							actionId: 'pan',
 							options: {
 								target: 'current',
-								direction: '-',
-								ammount: '1',
+								direction: 'scale',
+								scale: -1,
 							},
 						},
 					],
@@ -662,62 +457,30 @@ module.exports = function (self) {
 			],
 			feedbacks: [
 				{
-					feedbackId: 'active',
-					options: {},
-					style: {
-						color: ACTIVE_TEXT,
-						bgcolor: ACTIVE_BACKGROUND,
+					feedbackId: 'theme_base',
+					options: {
+						state: 'inactive',
 					},
 				},
-			],
-		},
-
-		pan_right: {
-			type: 'button',
-			category: 'CURRENT CUE ADJUSTMENTS',
-			name: `PAN RIGHT`,
-			style: {
-				text: `>`,
-				size: 'Auto',
-				color: INACTIVE_TEXT,
-				bgcolor: INACTIVE_BACKGROUND,
-			},
-			steps: [
 				{
-					down: [
-						{
-							actionId: 'pan',
-							options: {
-								target: 'current',
-								direction: '+',
-								ammount: '1',
-							},
-						},
-					],
-					up: [],
+					feedbackId: 'pan',
+					options: {},
 				},
-			],
-			feedbacks: [
 				{
 					feedbackId: 'active',
 					options: {},
-					style: {
-						color: ACTIVE_TEXT,
-						bgcolor: ACTIVE_BACKGROUND,
-					},
 				},
 			],
 		},
-
 		pan_revert: {
 			type: 'button',
-			category: 'CURRENT CUE ADJUSTMENTS',
-			name: `VOL REVERT`,
+			category: 'ADJUSTMENTS',
+			name: `PAN REVERT`,
 			style: {
-				text: `PAN`,
-				size: '18',
-				color: INACTIVE_TEXT,
-				bgcolor: INACTIVE_BACKGROUND,
+				text: `PAN\\n$(multiplay:p_current)`,
+				size: '14',
+				color: '$' + '(multiplay:color_inactive_text)',
+				bgcolor: '$' + '(multiplay:color_inactive_bg)',
 			},
 			steps: [
 				{
@@ -735,12 +498,1157 @@ module.exports = function (self) {
 			],
 			feedbacks: [
 				{
+					feedbackId: 'theme_base',
+					options: {
+						state: 'inactive',
+					},
+				},
+				{
+					feedbackId: 'pan',
+					options: {},
+				},
+				{
 					feedbackId: 'active',
 					options: {},
-					style: {
-						color: ACTIVE_TEXT,
-						bgcolor: ACTIVE_BACKGROUND,
+				},
+			],
+		},
+		speed_scale_normal: {
+			type: 'button',
+			category: 'ADJUSTMENTS',
+			name: `SPEED SCALE 1.0`,
+			style: {
+				text: `SPEED\\nNORM`,
+				size: '14',
+				color: '$' + '(multiplay:color_inactive_text)',
+				bgcolor: '$' + '(multiplay:color_inactive_bg)',
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'speed',
+							options: {
+								target: 'current',
+								behaviour: 'scale',
+								scale: 0,
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'theme_base',
+					options: {
+						state: 'inactive',
 					},
+				},
+				{
+					feedbackId: 'speed',
+					options: {},
+				},
+				{
+					feedbackId: 'active',
+					options: {},
+				},
+			],
+		},
+		speed_revert: {
+			type: 'button',
+			category: 'ADJUSTMENTS',
+			name: `SPEED REVERT`,
+			style: {
+				text: `SPEED\\n$(multiplay:s_current)`,
+				size: '14',
+				color: '$' + '(multiplay:color_inactive_text)',
+				bgcolor: '$' + '(multiplay:color_inactive_bg)',
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'speed',
+							options: {
+								target: 'current',
+								behaviour: 'revert',
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'theme_base',
+					options: {
+						state: 'inactive',
+					},
+				},
+				{
+					feedbackId: 'speed',
+					options: {},
+				},
+				{
+					feedbackId: 'active',
+					options: {},
+				},
+			],
+		},
+		jump_default: {
+			type: 'button',
+			category: 'ADJUSTMENTS',
+			name: `JUMP FWD DEFAULT`,
+			style: {
+				text: `JUMP\\nFWD`,
+				size: '14',
+				color: '$' + '(multiplay:color_inactive_text)',
+				bgcolor: '$' + '(multiplay:color_inactive_bg)',
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'jump',
+							options: {
+								target: 'current',
+								direction: 'fwd',
+								amount: 0,
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'theme_base',
+					options: {
+						state: 'inactive',
+					},
+				},
+				{
+					feedbackId: 'active',
+					options: {},
+				},
+			],
+		},
+	}
+
+	self.setPresetDefinitions({
+		...PRESETS,
+		go: {
+			type: 'button',
+			category: 'ACTIONS',
+			name: `GO / STOP`,
+			style: {
+				text: `GO`,
+				size: 'auto',
+				color: '$' + '(multiplay:color_inactive_text)',
+				bgcolor: '$' + '(multiplay:color_inactive_bg)',
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'go',
+							options: {
+								stopAll: false,
+								target: 'current',
+							},
+						},
+					],
+					up: [],
+				},
+				{
+					down: [
+						{
+							actionId: 'stop',
+							options: {
+								target: 'current',
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'theme_base',
+					options: {
+						state: 'inactive',
+					},
+				},
+				{
+					feedbackId: 'checkState',
+					options: {
+						action: 0,
+					},
+				},
+			],
+		},
+
+		stop_all: {
+			type: 'button',
+			category: 'ACTIONS',
+			name: `STOP ALL`,
+			style: {
+				text: `STOP ALL`,
+				size: '18',
+				color: '$' + '(multiplay:color_inactive_text)',
+				bgcolor: '$' + '(multiplay:color_inactive_bg)',
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'stop',
+							options: {
+								target: 'active',
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'theme_base',
+					options: {
+						state: 'inactive',
+					},
+				},
+				{
+					feedbackId: 'checkState',
+					options: {
+						action: 1,
+					},
+				},
+			],
+		},
+
+		pause_all: {
+			type: 'button',
+			category: 'ACTIONS',
+			name: `PAUSE ALL`,
+			style: {
+				text: `PAUSE ALL`,
+				size: '18',
+				color: '$' + '(multiplay:color_inactive_text)',
+				bgcolor: '$' + '(multiplay:color_inactive_bg)',
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'pause',
+							options: {
+								toggle: true,
+								target: 'active',
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'theme_base',
+					options: {
+						state: 'inactive',
+					},
+				},
+				{
+					feedbackId: 'checkState',
+					options: {
+						action: 7,
+					},
+				},
+			],
+		},
+
+		fade_all: {
+			type: 'button',
+			category: 'ACTIONS',
+			name: `FADE ALL`,
+			style: {
+				text: `FADE ALL`,
+				size: '18',
+				color: '$' + '(multiplay:color_inactive_text)',
+				bgcolor: '$' + '(multiplay:color_inactive_bg)',
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'fade',
+							options: {
+								target: 'active',
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'theme_base',
+					options: {
+						state: 'inactive',
+					},
+				},
+				{
+					feedbackId: 'checkState',
+					options: {
+						action: 2,
+					},
+				},
+			],
+		},
+
+		restart_all: {
+			type: 'button',
+			category: 'ACTIONS',
+			name: `RESTART ALL`,
+			style: {
+				text: `RESTART ALL`,
+				size: '14',
+				color: '$' + '(multiplay:color_inactive_text)',
+				bgcolor: '$' + '(multiplay:color_inactive_bg)',
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'restart',
+							options: {
+								target: 'active',
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'theme_base',
+					options: {
+						state: 'inactive',
+					},
+				},
+				{
+					feedbackId: 'checkState',
+					options: {
+						action: 2,
+					},
+				},
+			],
+		},
+
+		next: {
+			type: 'button',
+			category: 'PLAYHEAD MOVE',
+			name: `SELECT NEXT CUE`,
+			style: {
+				text: `NEXT`,
+				size: '18',
+				color: '$' + '(multiplay:color_inactive_text)',
+				bgcolor: '$' + '(multiplay:color_inactive_bg)',
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'select',
+							options: {
+								target: 'next',
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'theme_base',
+					options: {
+						state: 'inactive',
+					},
+				},
+				{
+					feedbackId: 'navigation',
+					options: {},
+				},
+				{
+					feedbackId: 'checkState',
+					options: {
+						action: 4,
+					},
+				},
+			],
+		},
+
+		prev: {
+			type: 'button',
+			category: 'PLAYHEAD MOVE',
+			name: `SELECT PREVIOUS CUE`,
+			style: {
+				text: `PREV`,
+				size: '18',
+				color: '$' + '(multiplay:color_inactive_text)',
+				bgcolor: '$' + '(multiplay:color_inactive_bg)',
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'select',
+							options: {
+								target: 'prev',
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'theme_base',
+					options: {
+						state: 'inactive',
+					},
+				},
+                {
+                    feedbackId: 'navigation',
+                    options: {},
+                },
+				{
+					feedbackId: 'checkState',
+					options: {
+						action: 3,
+					},
+				},
+			],
+		},
+
+		first: {
+			type: 'button',
+			category: 'PLAYHEAD MOVE',
+			name: `SELECT FIRST CUE`,
+			style: {
+				text: `FIRST`,
+				size: '18',
+				color: '$' + '(multiplay:color_inactive_text)',
+				bgcolor: '$' + '(multiplay:color_inactive_bg)',
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'select',
+							options: {
+								target: 'first',
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'theme_base',
+					options: {
+						state: 'inactive',
+					},
+				},
+				{
+					feedbackId: 'navigation',
+					options: {},
+				},
+				{
+					feedbackId: 'checkState',
+					options: {
+						action: 5,
+					},
+				},
+			],
+		},
+
+		last: {
+			type: 'button',
+			category: 'PLAYHEAD MOVE',
+			name: `SELECT LAST CUE`,
+			style: {
+				text: `LAST`,
+				size: '18',
+				color: '$' + '(multiplay:color_inactive_text)',
+				bgcolor: '$' + '(multiplay:color_inactive_bg)',
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'select',
+							options: {
+								target: 'last',
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'theme_base',
+					options: {
+						state: 'inactive',
+					},
+				},
+				{
+					feedbackId: 'navigation',
+					options: {},
+				},
+				{
+					feedbackId: 'checkState',
+					options: {
+						action: 6,
+					},
+				},
+			],
+		},
+
+		t_remaining: {
+			type: 'button',
+			category: 'INFO',
+			name: `TIME REMAINING`,
+			style: {
+				text: `$(multiplay:t_remain)`,
+				size: '13',
+				color: '$' + '(multiplay:color_info_text)',
+				bgcolor: '$' + '(multiplay:color_info_bg)',
+			},
+			steps: [
+				{
+					down: [],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'warningTime',
+					options: {
+						seconds: 5,
+					},
+					style: {
+						color: RED,
+					},
+				},
+				{
+					feedbackId: 'time_font_size',
+					options: {
+						type: 'remain',
+					},
+				},
+				{
+					feedbackId: 'theme_base',
+					options: {
+						state: 'info',
+					},
+				},
+			],
+		},
+
+		t_elapsed: {
+			type: 'button',
+			category: 'INFO',
+			name: `TIME ELAPSED`,
+			style: {
+				text: `$(multiplay:t_elapsed)`,
+				size: '13',
+				color: '$' + '(multiplay:color_info_text)',
+				bgcolor: '$' + '(multiplay:color_info_bg)',
+			},
+			steps: [
+				{
+					down: [],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'time_font_size',
+					options: {
+						type: 'elapsed',
+					},
+				},
+				{
+					feedbackId: 'theme_base',
+					options: {
+						state: 'info',
+					},
+				},
+			],
+		},
+
+		current_cue: {
+			type: 'button',
+			category: 'INFO',
+			name: `CURRENT CUE`,
+			style: {
+				text: `$(multiplay:q_description)`,
+				size: '13',
+				color: '$' + '(multiplay:color_info_text)',
+				bgcolor: '$' + '(multiplay:color_info_bg)',
+			},
+			steps: [
+				{
+					down: [],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'theme_base',
+					options: {
+						state: 'info',
+					},
+				},
+			],
+		},
+
+		volume_up: {
+			type: 'button',
+			category: 'CURRENT CUE ADJUSTMENTS',
+			name: `VOL UP`,
+			style: {
+				text: `+`,
+				size: '24',
+				color: '$' + '(multiplay:color_inactive_text)',
+				bgcolor: '$' + '(multiplay:color_inactive_bg)',
+			},
+			options: {
+				stepAutoProgress: false,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'volume',
+							options: {
+								target: 'current',
+								behaviour: '+',
+								relative: '1',
+								holdAction: 'repeat',
+								holdRelative: 2,
+								holdDelay: 500,
+								holdInterval: 100,
+							},
+							delay: 0,
+						},
+					],
+					up: [
+						{
+							actionId: 'hold_release',
+							options: {},
+						},
+					],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'theme_base',
+					options: {
+						state: 'inactive',
+					},
+				},
+				{
+					feedbackId: 'volume',
+					options: {},
+				},
+				{
+					feedbackId: 'active',
+					options: {},
+				},
+			],
+		},
+
+        volume_revert: {
+            type: 'button',
+            category: 'CURRENT CUE ADJUSTMENTS',
+            name: `VOL REVERT`,
+            style: {
+                text: `VOL\\n$(multiplay:v_current)`,
+                size: '18',
+                color: '$' + '(multiplay:color_inactive_text)',
+                bgcolor: '$' + '(multiplay:color_inactive_bg)',
+            },
+            steps: [
+                {
+                    down: [
+                        {
+                            actionId: 'volume',
+                            options: {
+                                target: 'current',
+                                behaviour: 'revert',
+                            },
+                        },
+                    ],
+                    up: [],
+                },
+            ],
+            feedbacks: [
+                {
+                    feedbackId: 'theme_base',
+                    options: {
+                        state: 'inactive',
+                    },
+                },
+                {
+                    feedbackId: 'volume',
+                    options: {},
+                },
+                {
+                    feedbackId: 'active',
+                    options: {},
+                },
+            ],
+        },
+
+		volume_down: {
+			type: 'button',
+			category: 'CURRENT CUE ADJUSTMENTS',
+			name: `VOL DOWN`,
+			style: {
+				text: `-`,
+				size: 'Auto',
+				color: '$' + '(multiplay:color_inactive_text)',
+				bgcolor: '$' + '(multiplay:color_inactive_bg)',
+			},
+			options: {
+				stepAutoProgress: false,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'volume',
+							options: {
+								target: 'current',
+								behaviour: '-',
+								relative: '1',
+								holdAction: 'repeat',
+								holdRelative: 2,
+								holdDelay: 500,
+								holdInterval: 100,
+							},
+							delay: 0,
+						},
+					],
+					up: [
+						{
+							actionId: 'hold_release',
+							options: {},
+						},
+					],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'theme_base',
+					options: {
+						state: 'inactive',
+					},
+				},
+				{
+					feedbackId: 'volume',
+					options: {},
+				},
+				{
+					feedbackId: 'active',
+					options: {},
+				},
+			],
+		},
+
+		speed_up: {
+			type: 'button',
+			category: 'CURRENT CUE ADJUSTMENTS',
+			name: `SPEED UP`,
+			style: {
+				text: `+`,
+				size: '24',
+				color: '$' + '(multiplay:color_inactive_text)',
+				bgcolor: '$' + '(multiplay:color_inactive_bg)',
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'speed',
+							options: {
+								target: 'current',
+								behaviour: 'relative',
+								relative: '1',
+								holdAction: 'repeat',
+								holdDelay: 500,
+								holdInterval: 100,
+							},
+						},
+					],
+					up: [
+						{
+							actionId: 'hold_release',
+							options: {},
+						},
+					],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'theme_base',
+					options: {
+						state: 'inactive',
+					},
+				},
+				{
+					feedbackId: 'speed',
+					options: {},
+				},
+				{
+					feedbackId: 'active',
+					options: {},
+				},
+			],
+		},
+
+		speed_down: {
+			type: 'button',
+			category: 'CURRENT CUE ADJUSTMENTS',
+			name: `SPEED DOWN`,
+			style: {
+				text: `-`,
+				size: 'Auto',
+				color: '$' + '(multiplay:color_inactive_text)',
+				bgcolor: '$' + '(multiplay:color_inactive_bg)',
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'speed',
+							options: {
+								target: 'current',
+								behaviour: 'relative',
+								relative: '-1',
+								holdAction: 'repeat',
+								holdDelay: 500,
+								holdInterval: 100,
+							},
+						},
+					],
+					up: [
+						{
+							actionId: 'hold_release',
+							options: {},
+						},
+					],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'theme_base',
+					options: {
+						state: 'inactive',
+					},
+				},
+				{
+					feedbackId: 'speed',
+					options: {},
+				},
+				{
+					feedbackId: 'active',
+					options: {},
+				},
+			],
+		},
+
+		speed_revert: {
+			type: 'button',
+			category: 'CURRENT CUE ADJUSTMENTS',
+			name: `SPEED REVERT`,
+			style: {
+				text: `SPEED\\n$(multiplay:s_current)`,
+				size: '18',
+				color: '$' + '(multiplay:color_inactive_text)',
+				bgcolor: '$' + '(multiplay:color_inactive_bg)',
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'speed',
+							options: {
+								target: 'current',
+								behaviour: 'revert',
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'theme_base',
+					options: {
+						state: 'inactive',
+					},
+				},
+				{
+					feedbackId: 'speed',
+					options: {},
+				},
+				{
+					feedbackId: 'active',
+					options: {},
+				},
+			],
+		},
+
+		pan_left: {
+			type: 'button',
+			category: 'CURRENT CUE ADJUSTMENTS',
+			name: `PAN LEFT`,
+			style: {
+				text: `<`,
+				size: 'Auto',
+				color: '$' + '(multiplay:color_inactive_text)',
+				bgcolor: '$' + '(multiplay:color_inactive_bg)',
+			},
+			options: {
+				stepAutoProgress: true,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'pan',
+							options: {
+								target: 'current',
+								direction: '-',
+								amount: '1',
+								holdAction: 'repeat',
+								holdDelay: 500,
+								holdInterval: 100,
+							},
+							delay: 0,
+						},
+					],
+					up: [
+						{
+							actionId: 'hold_release',
+							options: {},
+						},
+					],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'theme_base',
+					options: {
+						state: 'inactive',
+					},
+				},
+				{
+					feedbackId: 'pan',
+					options: {},
+				},
+				{
+					feedbackId: 'active',
+					options: {},
+				},
+			],
+		},
+
+		pan_right: {
+			type: 'button',
+			category: 'CURRENT CUE ADJUSTMENTS',
+			name: `PAN RIGHT`,
+			style: {
+				text: `>`,
+				size: 'Auto',
+				color: '$' + '(multiplay:color_inactive_text)',
+				bgcolor: '$' + '(multiplay:color_inactive_bg)',
+			},
+			options: {
+				stepAutoProgress: true,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'pan',
+							options: {
+								target: 'current',
+								direction: '+',
+								amount: '1',
+								holdAction: 'repeat',
+								holdDelay: 500,
+								holdInterval: 100,
+							},
+							delay: 0,
+						},
+					],
+					up: [
+						{
+							actionId: 'hold_release',
+							options: {},
+						},
+					],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'theme_base',
+					options: {
+						state: 'inactive',
+					},
+				},
+				{
+					feedbackId: 'pan',
+					options: {},
+				},
+				{
+					feedbackId: 'active',
+					options: {},
+				},
+			],
+		},
+
+		pan_revert: {
+			type: 'button',
+			category: 'CURRENT CUE ADJUSTMENTS',
+			name: `PAN REVERT`,
+			style: {
+				text: `PAN\\n$(multiplay:p_current)`,
+				size: '18',
+				color: '$' + '(multiplay:color_inactive_text)',
+				bgcolor: '$' + '(multiplay:color_inactive_bg)',
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'pan',
+							options: {
+								target: 'current',
+								direction: 'revert',
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'theme_base',
+					options: {
+						state: 'inactive',
+					},
+				},
+				{
+					feedbackId: 'pan',
+					options: {},
+				},
+				{
+					feedbackId: 'active',
+					options: {},
+				},
+			],
+		},
+
+		pan_center: {
+			type: 'button',
+			category: 'CURRENT CUE ADJUSTMENTS',
+			name: `PAN CENTER`,
+			style: {
+				text: `PAN\\nCENTER`,
+				size: '14',
+				color: '$' + '(multiplay:color_inactive_text)',
+				bgcolor: '$' + '(multiplay:color_inactive_bg)',
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'pan',
+							options: {
+								target: 'current',
+								direction: 'absolute',
+								absolute: 0,
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'theme_base',
+					options: {
+						state: 'inactive',
+					},
+				},
+				{
+					feedbackId: 'pan',
+					options: {},
+				},
+				{
+					feedbackId: 'active',
+					options: {},
+				},
+			],
+		},
+
+		speed_normal: {
+			type: 'button',
+			category: 'CURRENT CUE ADJUSTMENTS',
+			name: `SPEED 100%`,
+			style: {
+				text: `SPEED\\n100%`,
+				size: '14',
+				color: '$' + '(multiplay:color_inactive_text)',
+				bgcolor: '$' + '(multiplay:color_inactive_bg)',
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'speed',
+							options: {
+								target: 'current',
+								behaviour: 'absolute',
+								absolute: 100,
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'theme_base',
+					options: {
+						state: 'inactive',
+					},
+				},
+				{
+					feedbackId: 'speed',
+					options: {},
+				},
+				{
+					feedbackId: 'active',
+					options: {},
 				},
 			],
 		},
